@@ -11,6 +11,14 @@ public class ladder extends game_object {
     this.setIsCollectable(false);
   }
 
+  public boolean canClimbUp(character c) {
+    return true;
+  }
+
+  public boolean canClimbdown(character c) {
+    return true;
+  }
+
   @Override
   public String toString() {
     return "H";

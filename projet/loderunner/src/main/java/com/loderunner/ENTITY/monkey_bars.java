@@ -10,6 +10,14 @@ public class monkey_bars extends game_object {
     this.setIsSolid(false);
   }
 
+  public boolean canMoveHorizontaly() {
+    return true;
+  }
+
+  public boolean canFall() {
+    return false;
+  }
+
   @Override
   public String toString() {
     return "-";

@@ -5,7 +5,7 @@ abstract public class entity {
 
   entity(int x, int y) {
     setX(x);
-    setX(y);
+    setY(y);
   }
 
   public void setX(int x) {

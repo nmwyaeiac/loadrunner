@@ -25,6 +25,10 @@ public class gold extends game_object {
   }
 
   boolean isCollected() {
+    return !collected && this.getisCollectable();
+  }
+
+  public boolean shouldBeRemoved() {
     return collected;
   }
 

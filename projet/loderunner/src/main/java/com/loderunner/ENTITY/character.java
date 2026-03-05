@@ -1,5 +1,7 @@
 package com.loderunner.ENTITY;
 
+import com.loderunner.ENTITY.WALL.brick;
+
 /**
  * entity_mobile
  */
@@ -73,5 +75,26 @@ public abstract class character extends entity {
       this.setButin(this.getButin() + g.getValue());
       g.collected();
     }
+  }
+
+  public boolean dig(game_object g) {
+    if (g instanceof brick) {
+      brick b = (brick) g;
+      if (b.canDigg()) {
+        b.hit();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean canMoveTo(game_object target) {
+    if (target == null)
+      return true;
+    if (target instanceof brick) {
+      brick b = (brick) target;
+      return b.getIsSolid();
+    }
+    return !target.getIsSolid();
   }
 }
