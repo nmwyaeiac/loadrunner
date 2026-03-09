@@ -1,6 +1,6 @@
 package com.loderunner.ENTITY;
 
-import com.loderunner.ENTITY.WALL.brick.*;
+import com.loderunner.ENTITY.WALL.*;
 
 /**
  * enemy implementer l ia pour controler les enemies pour qu il tqrget le joueur
@@ -29,8 +29,10 @@ public class enemy extends character {
     if (b instanceof brick) {
       if (b.getIsSolid() == false) {
         this.setIsUnderGround(true);
+        return true;
       }
     }
+    return false;
   }
 
 }

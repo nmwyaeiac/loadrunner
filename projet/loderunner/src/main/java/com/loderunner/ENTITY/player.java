@@ -1,5 +1,7 @@
 package com.loderunner.ENTITY;
 
+import com.loderunner.ENTITY.WALL.brick;
+
 public class player extends character {
   private int life;
   private int butin;
