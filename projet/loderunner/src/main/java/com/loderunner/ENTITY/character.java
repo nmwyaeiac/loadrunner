@@ -77,6 +77,12 @@ public abstract class character extends entity {
     }
   }
 
+  public void dropGold() {
+    if (this.getButin() > 0) {
+      this.setButin(this.getButin() - 1);
+    }
+  }
+
   public boolean dig(game_object g) {
     if (g instanceof brick) {
       brick b = (brick) g;

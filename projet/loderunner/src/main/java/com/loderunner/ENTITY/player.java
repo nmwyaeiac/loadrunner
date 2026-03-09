@@ -17,4 +17,13 @@ public class player extends character {
     return this.life;
   }
 
+  public boolean canMoveTo(game_object target) {
+    if (target == null)
+      return true;
+    if (target instanceof brick) {
+      brick b = (brick) target;
+      return b.getIsSolid();
+    }
+    return !target.getIsSolid();
+  }
 }
