@@ -4,7 +4,7 @@ package com.loderunner.ENTITY;
  * ladder
  */
 public class ladder extends game_object {
-  ladder(int x, int y) {
+  public ladder(int x, int y) {
     super(x, y);
 
     this.setIsSolid(false);

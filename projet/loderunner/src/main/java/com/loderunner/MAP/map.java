@@ -40,8 +40,25 @@ public class map {
     this.player = p;
   }
 
+  public player getPlayer() {
+    return this.player;
+  }
+
   public void addenemies(enemy e) {
     enemies.add(e);
+  }
+
+  public List<enemy> getEnemy() {
+    return enemies;
+  }
+
+  public brick getBrickAt(int x, int y) {
+    for (brick b : bricks) {
+      if (b.getX() == x && b.getY() == y) {
+        return b;
+      }
+    }
+    return null;
   }
 
   public void addGold(gold g) {
@@ -55,7 +72,7 @@ public class map {
 
   public gold getGoldAt(int x, int y) {
     for (gold g : golds)
-      if (g.getX() == x && g.getY() == y && !g.getisCollectable())
+      if (g.getX() == x && g.getY() == y && g.getisCollectable())
         return g;
     return null;
 
@@ -90,15 +107,15 @@ public class map {
   }
 
   public void setMapEmpty(int width, int height) {
-    for (int x = 0; x < height; x++) {
-      for (int y = 0; y < width; y++) {
+    for (int x = 0; x < width; x++) {
+      for (int y = 0; y < height; y++) {
         grid[x][y] = tiletype.EMPTY;
       }
     }
   }
 
   public void setTile(int x, int y, tiletype t) {
-    if (x >= 0 && x <= this.getWidth() && y >= 0 && y <= this.getHeight()) {
+    if (x >= 0 && x < this.getWidth() && y >= 0 && y < this.getHeight()) {
       grid[x][y] = t;
     }
   }
@@ -167,6 +184,12 @@ public class map {
         return b.toString();
     return " ";
 
+  }
+
+  public void update() {
+    for (brick b : bricks)
+      b.update();
+    golds.removeIf(gold::shouldBeRemoved);
   }
 
   public boolean isLevelCompleted() {

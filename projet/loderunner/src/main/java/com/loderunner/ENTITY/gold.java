@@ -4,7 +4,7 @@ public class gold extends game_object {
   private int value;
   private boolean collected = false;
 
-  gold(int x, int y, int value) {
+  public gold(int x, int y, int value) {
     super(x, y);
     this.setIsCollectable(true);
     this.setIsSolid(false);
@@ -24,8 +24,12 @@ public class gold extends game_object {
     this.collected = true;
   }
 
-  boolean isCollected() {
-    return !collected && this.getisCollectable();
+  public boolean getGollected() {
+    return this.collected;
+  }
+
+  public boolean isAvailable() {
+    return !collected;
   }
 
   public boolean shouldBeRemoved() {

@@ -1,14 +1,15 @@
 package com.loderunner.ENTITY;
 
-import com.loderunner.ENTITY.WALL.brick;
-
 public class player extends character {
   private int life;
-  private int butin;
 
-  player(int x, int y, int capaciter, int life) {
+  public player(int x, int y, int capaciter, int life) {
     super(x, y, capaciter);
     this.setLife(life);
+  }
+
+  public player(int x, int y) {
+    this(x, y, 99, 3);
   }
 
   public void setLife(int life) {
@@ -19,13 +20,17 @@ public class player extends character {
     return this.life;
   }
 
-  public boolean canMoveTo(game_object target) {
-    if (target == null)
-      return true;
-    if (target instanceof brick) {
-      brick b = (brick) target;
-      return b.getIsSolid();
-    }
-    return !target.getIsSolid();
+  public void LoseLife() {
+    this.setLife(this.getlife() - 1);
   }
+
+  public boolean isAlive() {
+    return this.life > 0;
+  }
+
+  @Override
+  public String toString() {
+    return "@";
+  }
+
 }

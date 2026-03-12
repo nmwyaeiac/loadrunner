@@ -2,10 +2,8 @@ package com.loderunner.ENTITY;
 
 import com.loderunner.ENTITY.WALL.*;
 
-/**
- * enemy implementer l ia pour controler les enemies pour qu il tqrget le joueur
- * il ne peuve prendre qu un seul
- * gold et pour le recuperer il doit etre dans un enseveli
+/*
+ * enemie - piloter par une ia,capa li;iter a 1 gold
  */
 public class enemy extends character {
   private boolean isUnderGround;
@@ -27,7 +25,7 @@ public class enemy extends character {
 
   public boolean isinbrokebreak(game_object b) {
     if (b instanceof brick) {
-      if (b.getIsSolid() == false) {
+      if (!b.getIsSolid()) {
         this.setIsUnderGround(true);
         return true;
       }
@@ -35,4 +33,8 @@ public class enemy extends character {
     return false;
   }
 
+  @Override
+  public String toString() {
+    return "E";
+  }
 }

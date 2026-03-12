@@ -22,7 +22,7 @@ public class brick extends wall {
   }
 
   public long getBreakTime() {
-    return this.getBreakTime();
+    return this.breakTime;
   }
 
   public void setIsBroken(boolean isBroken) {

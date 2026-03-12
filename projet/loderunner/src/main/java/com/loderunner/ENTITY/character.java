@@ -14,7 +14,7 @@ public abstract class character extends entity {
     LEFT, RIGHT
   }
 
-  character(int x, int y, int capaciter) {
+  public character(int x, int y, int capaciter) {
     super(x, y);
     this.setCapaciter(capaciter);
     this.setButin(0);
@@ -99,7 +99,7 @@ public abstract class character extends entity {
       return true;
     if (target instanceof brick) {
       brick b = (brick) target;
-      return b.getIsSolid();
+      return !b.getIsSolid();
     }
     return !target.getIsSolid();
   }
