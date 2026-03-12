@@ -50,47 +50,50 @@ public class game {
     loop();
   }
 
-private void  loop(){
-  while(running){
-    long tickStart= System.currentTimeMillis();
-    processInput();
-    physics.applyGravity(gamePlayer);
-    if(physics.playerCollectsGold(gamePlayer))score+=100;
-    if(physics.playerTouchEnemy(gamePlayer)){
-      gamePlayer.LoseLife();
-      respawnPlayer();
-    }
-    gameMap.update();
-    if(gameMap.isLevelCompleted()){
-      rederer.rendererVictory(score,level);
-      level++;
-      try{
-        thread.sleep(2000);
-        loadLevel(level);
-      }catch(IOException e){System.out.println("plus de niveau dispo. fin de jeux");
-      running=false;
-      }catch(InterruptedException e){
-        Thread.currentThread().interrupt();
+  private void loop() {
+    while (running) {
+      long tickStart = System.currentTimeMillis();
+      processInput();
+      physics.applyGravity(gamePlayer);
+      if (physics.playerCollectsGold(gamePlayer))
+        score += 100;
+      if (physics.playerColidEnemy(gamePlayer)) {
+        gamePlayer.LoseLife();
+        respawnPlayer();
+      }
+      gameMap.update();
+      if (gameMap.isLevelCompleted()) {
+        renderer.renderVictory(score, level);
+        level++;
+        try {
+          Thread.sleep(2000);
+          loadLevel(level);
+        } catch (IOException e) {
+          System.out.println("plus de niveau dispo. fin de jeux");
+          running = false;
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+        }
+      }
+      if (!gamePlayer.isAlive()) {
+        renderer.renderGameOver(score);
+        running = false;
+      }
+      renderer.render(gamePlayer, score, level);
+      // maitenir 10 fps
+      long e = System.currentTimeMillis() - tickStart;
+      long sleep = TICK_MS - e;
+      if (sleep > 0) {
+        try {
+          Thread.sleep(sleep);
+
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+        }
       }
     }
-    if(!gamePlayer.isAlive()){
-      renderer.renderGameOver(score);
-      running =false;
-    }
-    renderer.render(gamePlayer,score,level);
-    //maitenir 10 fps
-    long e =System.currentTimeMillis()-tickStart;
-    long sleep = TICK_MS-e;
-    if(sleep>0){try{
-      Thread.sleep(sleep);
-
-    catch(InterruptedException e){
-      Thread.currentThread().interrupt();
-    }
+    stopInputThread();
   }
-}
-  stopInputThread();
-}
 
   private void processInput() {
     Action action = inputQueue.poll();
@@ -104,7 +107,7 @@ private void  loop(){
         physics.moveRight(gamePlayer);
         break;
       case MOVE_UP:
-        physics.moveUp(gamePlayer);
+        physics.moveUP(gamePlayer);
         break;
       case MOVE_DOWN:
         physics.moveDown(gamePlayer);
