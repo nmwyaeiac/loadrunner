@@ -1,7 +1,7 @@
 package com.loderunner.INPUT;
 
 import java.io.IOException;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * InputHandler
@@ -18,14 +18,14 @@ public class inputhandler implements Runnable {
     UNKMOW
   }
 
-  private LinkedBlockingDeque<Action> queue;
+  private LinkedBlockingQueue<Action> queue;
   private volatile boolean running = true;
 
-  public inputhandler(LinkedBlockingDeque<Action> queue) {
+  public inputhandler(LinkedBlockingQueue<Action> queue) {
     this.setQueue(queue);
   }
 
-  public void setQueue(LinkedBlockingDeque<Action> queue) {
+  public void setQueue(LinkedBlockingQueue<Action> queue) {
     this.queue = queue;
   }
 

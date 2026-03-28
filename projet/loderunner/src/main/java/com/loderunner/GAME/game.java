@@ -25,10 +25,10 @@ public class game {
   private int score = 0;
   private int level = 1;
   private boolean running = false;
+  private boolean gameOver = false;
+  private boolean victory = false;
 
   private final LinkedBlockingQueue<Action> inputQueue = new LinkedBlockingQueue<>();
-  private inputhandler inputhandler;
-  private Thread inputThread;
 
   public game() {
   }
@@ -40,59 +40,71 @@ public class game {
     if (gamePlayer == null)
       throw new IOException("pas de joueur dans le niveau");
     physics = new physics(gameMap);
-    renderer = new renderer(gameMap);
+    gameOver = false;
+    victory = false;
+
+  }
+
+  public void update() {
+    if (!running || gameOver || victory)
+      return;
+    physics.applyGravity(gamePlayer);
+    if (physics.playerCollectsGold(gamePlayer))
+      score += 100;
+    if (physics.playerColidEnemy(gamePlayer)) {
+      gamePlayer.LoseLife();
+      if (!gamePlayer.isAlive()) {
+        gameOver = true;
+        running = false;
+        return;
+      }
+      respawnPlayer();
+    }
+    gameMap.update();
+    if (gameMap.isLevelCompleted()) {
+      level++;
+      try {
+        loadlevel(level);
+      } catch (IOException e) {
+        victory = true;
+        running = false;
+      }
+    }
   }
 
   public void start() throws IOException {
     loadlevel(level);
-    startInputThread();
     running = true;
-    loop();
   }
 
-  private void loop() {
-    while (running) {
-      long tickStart = System.currentTimeMillis();
-      processInput();
-      physics.applyGravity(gamePlayer);
-      if (physics.playerCollectsGold(gamePlayer))
-        score += 100;
-      if (physics.playerColidEnemy(gamePlayer)) {
-        gamePlayer.LoseLife();
-        respawnPlayer();
-      }
-      gameMap.update();
-      if (gameMap.isLevelCompleted()) {
-        renderer.renderVictory(score, level);
-        level++;
-        try {
-          Thread.sleep(2000);
-          loadLevel(level);
-        } catch (IOException e) {
-          System.out.println("plus de niveau dispo. fin de jeux");
-          running = false;
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-        }
-      }
-      if (!gamePlayer.isAlive()) {
-        renderer.renderGameOver(score);
-        running = false;
-      }
-      renderer.render(gamePlayer, score, level);
-      // maitenir 10 fps
-      long e = System.currentTimeMillis() - tickStart;
-      long sleep = TICK_MS - e;
-      if (sleep > 0) {
-        try {
-          Thread.sleep(sleep);
+  public void actionMoveUp() {
+    if (running)
+      inputQueue.offer(Action.MOVE_UP);
+  }
 
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-        }
-      }
-    }
-    stopInputThread();
+  public void actionMoveDown() {
+    if (running)
+      inputQueue.offer(Action.MOVE_UP);
+  }
+
+  public void actionMoveLeft() {
+    if (running)
+      inputQueue.offer(Action.MOVE_UP);
+  }
+
+  public void actionMoveRight() {
+    if (running)
+      inputQueue.offer(Action.MOVE_UP);
+  }
+
+  public void actionDigLeft() {
+    if (running)
+      inputQueue.offer(Action.MOVE_UP);
+  }
+
+  public void actionDigRight() {
+    if (running)
+      inputQueue.offer(Action.MOVE_UP);
   }
 
   private void processInput() {
@@ -121,8 +133,6 @@ public class game {
       case QUIT:
         running = false;
         break;
-      default:
-        break;
     }
   }
 
@@ -138,16 +148,24 @@ public class game {
     }
   }
 
-  private void startInputThread() {
-    inputhandler = new inputhandler(inputQueue);
-    inputThread = new Thread(inputhandler, "input-thread");
-    inputThread.start();
+  // getter
+  public map getGameMap() {
+    return gameMap;
   }
 
-  private void stopInputThread() {
-    if (inputhandler != null)
-      inputhandler.stop();
-    if (inputThread != null)
-      inputThread.interrupt();
+  public player getGamePlayer() {
+    return gamePlayer;
+  }
+
+  public int getScore() {
+    return score;
+  }
+
+  public boolean isGameOver() {
+    return gameOver;
+  }
+
+  public boolean isVictory() {
+    return gameOver;
   }
 }
