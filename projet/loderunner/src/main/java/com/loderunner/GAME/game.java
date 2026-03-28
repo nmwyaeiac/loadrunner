@@ -42,12 +42,14 @@ public class game {
     physics = new physics(gameMap);
     gameOver = false;
     victory = false;
+    running = true;
 
   }
 
   public void update() {
     if (!running || gameOver || victory)
       return;
+    processInput();
     physics.applyGravity(gamePlayer);
     if (physics.playerCollectsGold(gamePlayer))
       score += 100;
@@ -166,6 +168,6 @@ public class game {
   }
 
   public boolean isVictory() {
-    return gameOver;
+    return victory;
   }
 }
