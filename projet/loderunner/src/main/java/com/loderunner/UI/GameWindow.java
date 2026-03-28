@@ -3,7 +3,6 @@ package com.loderunner.UI;
 import com.loderunner.GAME.game;
 
 import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -33,7 +32,8 @@ public class GameWindow {
     // le canvas cest notre zone de dessin
     Canvas canvas = new Canvas(WIDTH, HEIGHT);
     GraphicsContext gc = canvas.getGraphicsContext2D();
-    renderer = new GameRenderer(gc, WIDTH, HEIGHT);
+    SpriteLoader sprites = new SpriteLoader();
+    renderer = new GameRenderer(gc, WIDTH, HEIGHT, sprites);
     StackPane root = new StackPane(canvas);
     Scene scene = new Scene(root, WIDTH, HEIGHT, Color.BLACK);
 
