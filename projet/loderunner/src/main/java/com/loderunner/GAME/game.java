@@ -33,7 +33,7 @@ public class game {
   public game() {
   }
 
-  private void loadlevel(int levelNumber) throws IOException {
+  public void loadlevel(int levelNumber) throws IOException {
     String p = "levels/level" + levelNumber + ".txt";
     gameMap = map_loader.LoadFromFile(p);
     gamePlayer = gameMap.getPlayer();
@@ -84,27 +84,27 @@ public class game {
 
   public void actionMoveDown() {
     if (running)
-      inputQueue.offer(Action.MOVE_UP);
+      inputQueue.offer(Action.MOVE_DOWN);
   }
 
   public void actionMoveLeft() {
     if (running)
-      inputQueue.offer(Action.MOVE_UP);
+      inputQueue.offer(Action.MOVE_LEFT);
   }
 
   public void actionMoveRight() {
     if (running)
-      inputQueue.offer(Action.MOVE_UP);
+      inputQueue.offer(Action.MOVE_RIGHT);
   }
 
   public void actionDigLeft() {
     if (running)
-      inputQueue.offer(Action.MOVE_UP);
+      inputQueue.offer(Action.DIG_LEFT);
   }
 
   public void actionDigRight() {
     if (running)
-      inputQueue.offer(Action.MOVE_UP);
+      inputQueue.offer(Action.DIG_RIGHT);
   }
 
   private void processInput() {

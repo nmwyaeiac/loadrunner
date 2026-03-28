@@ -5,7 +5,7 @@ package com.loderunner.ENTITY.WALL;
  *
  */
 public class bedrock extends wall {
-  bedrock(int x, int y) {
+  public bedrock(int x, int y) {
     super(x, y);
 
     this.setIsSolid(true);

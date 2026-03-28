@@ -9,7 +9,7 @@ public class brick extends wall {
   private long breakTime = 0;
   final long REGEN_DELAY = 5000;
 
-  brick(int x, int y, int durability) {
+  public brick(int x, int y, int durability) {
     super(x, y);
     this.setDurability(durability);
     this.setIsSolid(true);
@@ -17,7 +17,7 @@ public class brick extends wall {
 
   }
 
-  brick(int x, int y) {
+  public brick(int x, int y) {
     this(x, y, 3);
   }
 
