@@ -11,7 +11,7 @@ public abstract class character extends entity {
   protected Direction direction;
 
   public enum Direction {
-    LEFT, RIGHT
+    LEFT, RIGHT, UP, DOWN
   }
 
   public character(int x, int y, int capaciter) {
