@@ -163,6 +163,10 @@ public class game {
     return score;
   }
 
+  public int getLevel() {
+    return level;
+  }
+
   public boolean isGameOver() {
     return gameOver;
   }
