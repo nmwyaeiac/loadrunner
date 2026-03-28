@@ -7,6 +7,7 @@ com/loderunner/ENTITY/monkey_bars.class
 com/loderunner/GAME/renderer.class
 com/loderunner/INPUT/inputhandler.class
 com/loderunner/UI/GameWindow$2.class
+com/loderunner/UI/ScreenMenu.class
 com/loderunner/ENTITY/game_object.class
 com/loderunner/MAP/tiletype.class
 com/loderunner/GAME/physics.class
