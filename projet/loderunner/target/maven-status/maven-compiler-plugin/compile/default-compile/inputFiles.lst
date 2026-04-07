@@ -20,7 +20,10 @@
 /home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/MAP/map_loader.java
 /home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/MAP/tiletype.java
 /home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/Main.java
+/home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/NETWORK/Serveur.java
 /home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/UI/GameRenderer.java
 /home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/UI/GameWindow.java
+/home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/UI/NetworkWindow.java
 /home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/UI/ScreenMenu.java
+/home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/UI/SpriteLoader.java
 /home/kanoguti/Faculte/Info4B/loderunner/projet/loderunner/src/main/java/com/loderunner/loderunner.java

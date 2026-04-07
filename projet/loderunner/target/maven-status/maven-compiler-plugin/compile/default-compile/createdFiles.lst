@@ -1,3 +1,4 @@
+com/loderunner/NETWORK/Serveur.class
 com/loderunner/ENTITY/WALL/wall.class
 com/loderunner/MAP/map.class
 com/loderunner/ENTITY/ladder.class
@@ -14,6 +15,7 @@ com/loderunner/GAME/physics.class
 com/loderunner/ENTITY/gold.class
 com/loderunner/UI/GameWindow$1.class
 com/loderunner/INPUT/inputhandler$Action.class
+com/loderunner/UI/NetworkWindow.class
 com/loderunner/ENTITY/character.class
 com/loderunner/MAP/map_loader.class
 com/loderunner/Main.class
@@ -23,6 +25,7 @@ com/loderunner/ENTITY/player.class
 com/loderunner/Launcher.class
 com/loderunner/ENTITY/character$Direction.class
 com/loderunner/ENTITY/WALL/brick.class
+com/loderunner/UI/SpriteLoader.class
 com/loderunner/ENTITY/entity.class
 com/loderunner/ENTITY/WALL/bedrock.class
 com/loderunner/GAME/game.class
