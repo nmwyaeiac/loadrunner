@@ -1,6 +1,7 @@
 package com.loderunner.ENTITY;
+import java.io.Serializable;
 
-abstract public class entity {
+abstract public class entity implements Serializable {
   protected int x, y;
 
   entity(int x, int y) {

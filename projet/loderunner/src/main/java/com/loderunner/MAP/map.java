@@ -5,11 +5,13 @@ import com.loderunner.ENTITY.WALL.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
+
 
 /**
  * map
  */
-public class map {
+public class map implements Serializable {
   private tiletype[][] grid;
   private int width, height;
 
