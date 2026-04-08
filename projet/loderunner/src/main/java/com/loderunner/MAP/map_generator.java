@@ -1,6 +1,6 @@
 package com.loderunner.MAP;
 
-import com.loderunner.ressources.CONFIG.GameConfig;
+import com.loderunner.RESSOURCES.CONFIG.*;
 import com.loderunner.ENTITY.*;
 import com.loderunner.ENTITY.WALL.*;
 
@@ -55,22 +55,20 @@ public class map_generator {
     int[] prevPlatform = solPlatform;
     while (y > 2) {
       int gap = randBetween(cfg.GEN_FLOOR_GAP_MIN, cfg.GEN_FLOOR_GAP_MAX);
-      y = -gap;
+      y -= gap;
       if (y <= 1)
         break;// jsp comment faire sans pour l instant a adapter plus tard
       int maxLen = Math.max(cfg.GEN_FLOOR_GAP_MIN, cfg.GEN_FLOOR_GAP_MAX);
       int len = randBetween(cfg.GEN_PLATEFORM_MIN_LEN, maxLen);
-
       int cx = randBetween(1 + len / 2, width - 2 - len / 2);
-      int[] bounds = placePlatform(m, cx, len);
+      int[] bounds = placePlatform(m, cx, y, len);
       plateform.add(new int[] { bounds[0], bounds[1], y });
-
       int ladderX = randBetween(bounds[0], bounds[1]);
       placeLadder(m, ladderX, y, prevPlatform[2]);
       prevPlatform = new int[] { bounds[0], bounds[1], y };
     }
     int exitX = randBetween(1, width - 2);
-    placeLadder(m, exitX, 0, prevPlatform);
+    placeLadder(m, exitX, 0, prevPlatform[2]);
     return plateform;
   }
 
@@ -114,7 +112,7 @@ public class map_generator {
   }
 
   private List<int[]> placeEnemies(map m, List<int[]> platforms, int level) {
-    int count = cfg.enemyCountForlevel(level);
+    int count = cfg.enemyCountForLevel(level);
     List<int[]> candidates = getFreeSpots(m, platforms);
     List<int[]> placed = new ArrayList<>();
 

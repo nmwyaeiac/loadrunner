@@ -107,7 +107,7 @@ public class GameRenderer {
   }
 
   private void drawHUD(player p, int score, int level) {
-    if (p != null)
+    if (p == null)
       return;
     gc.setFill(Color.WHITE);
     gc.fillText("Score: " + score + " | Vies: " + p.getlife(), 10, 20);

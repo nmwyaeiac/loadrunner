@@ -1,4 +1,4 @@
-package com.loderunner.ressources.CONFIG;
+package com.loderunner.RESSOURCES.CONFIG;
 
 public class GameConfig {
   private static GameConfig instance;
@@ -37,8 +37,10 @@ public class GameConfig {
   public int GEN_MIN_HEIGHT = 14;
   public int GEN_MAX_HEIGHT = 20;
 
-  public int GEN_FLOOR_GAP_MIN = 2;
-  public int GEN_FLOOR_GAP_MAX = 14;
+  public int GEN_FLOOR_GAP_MIN = 3;
+  public int GEN_FLOOR_GAP_MAX = 5;
+  public int GEN_PLATEFORM_MIN_LEN = 3;
+  public int GEN_PLATEFORM_MAX_LEN = 8;
 
   public int GEN_GOLD_PER_LEVEL = 5;
   public int GEN_ENEMY_PER_LEVEL = 1;
@@ -50,7 +52,8 @@ public class GameConfig {
 
   // reseau
 
-  public int NETWORK_PORT = 8990;
+  public int NETWORK_PORT_TCP = 8990;
+  public int NETWORK_PORT_UDP = 9000;
   public long NETWORK_TICK_MS = 100;
 
   // helper
