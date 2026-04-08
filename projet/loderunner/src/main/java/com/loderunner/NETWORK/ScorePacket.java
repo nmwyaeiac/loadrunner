@@ -95,7 +95,7 @@ public class ScorePacket {
   }
 
   public int getInt(String key) {
-    String search = "\"" + key + "\":\"";
+    String search = "\"" + key + "\":";
     int s = payload.indexOf(search);
     if (s == -1)
       throw new IllegalArgumentException("manque la clef gros: " + key);

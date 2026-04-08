@@ -17,8 +17,6 @@ public class GameWindow {
   // taille d un block en pixels (a pas toucher sinon l affichage pete)
   private static final int TILE_SIZE = 40;
   // 20 colonnes et 15 lignes max pr ce test
-  private static final int WIDTH = 20 * TILE_SIZE;
-  private static final int HEIGHT = 15 * TILE_SIZE;
 
   private final game gameInstance;
   private GameRenderer renderer;
@@ -28,7 +26,8 @@ public class GameWindow {
   }
 
   public void show(Stage primaryStage) {
-
+    int WIDTH = gameInstance.getGameMap().getWidth() * TILE_SIZE;
+    int HEIGHT = gameInstance.getGameMap().getHeight() * TILE_SIZE;
     // le canvas cest notre zone de dessin
     Canvas canvas = new Canvas(WIDTH, HEIGHT);
     GraphicsContext gc = canvas.getGraphicsContext2D();

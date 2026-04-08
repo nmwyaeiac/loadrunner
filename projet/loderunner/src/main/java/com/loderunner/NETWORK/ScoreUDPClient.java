@@ -3,7 +3,8 @@ package com.loderunner.NETWORK;
 import java.net.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ScoreUDPClient {
+//utilable dans un try with ressource
+public class ScoreUDPClient implements AutoCloseable {
   private static final int TIMEOUT_MS = 500;
   private static final int MAX_TRY = 3;
   private DatagramSocket socket;
@@ -57,6 +58,11 @@ public class ScoreUDPClient {
       socket.close();
       System.out.println("[score] client deco");
     }
+  }
+
+  @Override
+  public void close() {
+    disconect();
   }
 
   private void send(ScorePacket pkt) throws Exception {

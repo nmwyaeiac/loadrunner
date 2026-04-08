@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.Serializable;
 
-
 /**
  * map
  */
@@ -123,7 +122,7 @@ public class map implements Serializable {
   }
 
   public tiletype getTile(int x, int y) {
-    if (x >= 0 && x <= this.getWidth() && y >= 0 && y <= this.getHeight()) {
+    if (x >= 0 && x < this.getWidth() && y >= 0 && y <= this.getHeight()) {
       return grid[x][y];
     } else
       return tiletype.INDESTRUCTIBLE_WALL;

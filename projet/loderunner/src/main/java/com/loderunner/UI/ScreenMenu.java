@@ -48,23 +48,23 @@ public class ScreenMenu {
     Button btn = new Button(text);
     btn.setFont(Font.font("Monospace", 36));
     btn.setStyle(
-        "fx-background-color:#222222;" +
-            "fx-text-fill:#ffffff;" +
-            "fx-border-color:#ffffff;" +
-            "fx-border-width:1px;" +
-            "fx-padding:10 40 10 40;");
+        "-fx-background-color:#222222;" +
+            "-fx-text-fill:#ffffff;" +
+            "-fx-border-color:#ffffff;" +
+            "-fx-border-width:1px;" +
+            "-fx-padding:10 40 10 40;");
     btn.setOnMouseEntered(e -> btn.setStyle(
-        "fx-background-color:#444444;" +
-            "fx-text-fill:#ffff00;" +
-            "fx-border-color:#fff00;" +
-            "fx-border-width:1px;" +
-            "fx-padding:10 40 10 40;"));
+        "-fx-background-color:#444444;" +
+            "-fx-text-fill:#ffff00;" +
+            "-fx-border-color:#fff00;" +
+            "-fx-border-width:1px;" +
+            "-fx-padding:10 40 10 40;"));
     btn.setOnMouseExited(e -> btn.setStyle(
-        "fx-background-color:#222222;" +
-            "fx-text-fill:#ffffff;" +
-            "fx-border-color:#fffff;" +
-            "fx-border-width:1px;" +
-            "fx-padding:10 40 10 40;"));
+        "-fx-background-color:#222222;" +
+            "-fx-text-fill:#ffffff;" +
+            "-fx-border-color:#fffff;" +
+            "-fx-border-width:1px;" +
+            "-fx-padding:10 40 10 40;"));
     return btn;
   }
 }
