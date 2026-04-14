@@ -19,6 +19,12 @@ public class Main extends Application {
         () -> Platform.exit());
   }
 
+  private Runnable returnToMenu(Stage stage) {
+      return () -> {
+          try { start(stage); } catch (Exception e) {}
+      };
+  }
+
   private void StartSolo(Stage stage) {
     game gameInstance = new game();
     try {
@@ -27,42 +33,50 @@ public class Main extends Application {
       System.err.println("bug de chargement gros :" + e.getMessage());
       return;
     }
-    new GameWindow(gameInstance).show(stage);
+    new GameWindow(gameInstance, returnToMenu(stage)).show(stage);
   }
 
-  private void StartPanelMulti(Stage stage) {
-      javafx.scene.layout.VBox menu = new javafx.scene.layout.VBox(20);
-      menu.setAlignment(javafx.geometry.Pos.CENTER);
-      menu.setStyle("-fx-background-color: #000000;");
+    private void StartPanelMulti(Stage stage) {
+        javafx.scene.layout.VBox menu = new javafx.scene.layout.VBox(20);
+        menu.setAlignment(javafx.geometry.Pos.CENTER);
+        menu.setStyle("-fx-background-color: #000000;");
 
-      javafx.scene.text.Text title = new javafx.scene.text.Text("MODE MULTIJOUEUR");
-      title.setFill(javafx.scene.paint.Color.YELLOW);
-      title.setFont(javafx.scene.text.Font.font("Monospace", 36));
+        javafx.scene.text.Text title = new javafx.scene.text.Text("MODE MULTIJOUEUR");
+        title.setFill(javafx.scene.paint.Color.YELLOW);
+        title.setFont(javafx.scene.text.Font.font("Monospace", 36));
 
-      javafx.scene.control.Button btnHost = new javafx.scene.control.Button("1. Héberger la partie (J1)");
-      btnHost.setFont(javafx.scene.text.Font.font("Monospace", 20));
+        javafx.scene.control.Button btnHostCoop = new javafx.scene.control.Button("1. Héberger (Mode Coop)");
+        btnHostCoop.setFont(javafx.scene.text.Font.font("Monospace", 20));
 
-      javafx.scene.control.Label ipLabel = new javafx.scene.control.Label("Adresse IP de l'hôte :");
-      ipLabel.setTextFill(javafx.scene.paint.Color.WHITE);
+        javafx.scene.control.Button btnHostCombat = new javafx.scene.control.Button("2. Héberger (Mode Combat)");
+        btnHostCombat.setFont(javafx.scene.text.Font.font("Monospace", 20));
 
-      javafx.scene.control.TextField ipField = new javafx.scene.control.TextField("127.0.0.1");
-      ipField.setMaxWidth(150);
+        javafx.scene.control.Label ipLabel = new javafx.scene.control.Label("Adresse IP de l'hôte :");
+        ipLabel.setTextFill(javafx.scene.paint.Color.WHITE);
 
-      javafx.scene.control.Button btnJoin = new javafx.scene.control.Button("2. Rejoindre la partie (J2)");
-      btnJoin.setFont(javafx.scene.text.Font.font("Monospace", 20));
+        javafx.scene.control.TextField ipField = new javafx.scene.control.TextField("127.0.0.1");
+        ipField.setMaxWidth(150);
 
-      btnHost.setOnAction(e -> {
-          new Thread(() -> com.loderunner.NETWORK.Serveur.main(null)).start();
-          new NetworkWindow("127.0.0.1").show(stage);
-      });
+        javafx.scene.control.Button btnJoin = new javafx.scene.control.Button("3. Rejoindre la partie");
+        btnJoin.setFont(javafx.scene.text.Font.font("Monospace", 20));
 
-      btnJoin.setOnAction(e -> {
-          new NetworkWindow(ipField.getText()).show(stage);
-      });
+        btnHostCoop.setOnAction(e -> {
+            new Thread(() -> com.loderunner.NETWORK.Serveur.main(new String[]{"COOP"})).start();
+            new NetworkWindow("127.0.0.1", returnToMenu(stage)).show(stage);
+        });
 
-      menu.getChildren().addAll(title, btnHost, ipLabel, ipField, btnJoin);
-      stage.setScene(new javafx.scene.Scene(menu, 800, 600));
-  }
+        btnHostCombat.setOnAction(e -> {
+            new Thread(() -> com.loderunner.NETWORK.Serveur.main(new String[]{"COMBAT"})).start();
+            new NetworkWindow("127.0.0.1", returnToMenu(stage)).show(stage);
+        });
+
+        btnJoin.setOnAction(e -> {
+            new NetworkWindow(ipField.getText(), returnToMenu(stage)).show(stage);
+        });
+
+        menu.getChildren().addAll(title, btnHostCoop, btnHostCombat, ipLabel, ipField, btnJoin);
+        stage.setScene(new javafx.scene.Scene(menu, 800, 600));
+    }
 
   public static void main(String[] args) {
     launch(args);

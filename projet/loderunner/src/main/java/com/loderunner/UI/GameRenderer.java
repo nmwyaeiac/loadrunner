@@ -94,11 +94,16 @@ public class GameRenderer {
   }
 
   private void drawEnemies(map m) {
-    gc.setFill(Color.RED);
-    for (enemy e : m.getEnemy()) {
-      drawSprite("enemy", e.getX() * TILE_SIZE, e.getY() * TILE_SIZE, Color.RED);
+      for (enemy e : m.getEnemy()) {
+          if (e.isMate()) {
+              // j2
+              drawSprite("player2", e.getX() * TILE_SIZE, e.getY() * TILE_SIZE, Color.GREEN);
+          } else {
+              // ennemi Ia
+              drawSprite("enemy", e.getX() * TILE_SIZE, e.getY() * TILE_SIZE, Color.RED);
+          }
+      }
     }
-  }
 
   private void drawPlayer(player p) {
     if (p != null) {

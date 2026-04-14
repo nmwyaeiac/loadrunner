@@ -4,6 +4,7 @@ import com.loderunner.INPUT.inputhandler;
 import com.loderunner.INPUT.inputhandler.Action;
 import com.loderunner.MAP.map;
 import com.loderunner.MAP.map_loader;
+import com.loderunner.MAP.map_generator;
 import com.loderunner.ENTITY.player;
 import com.loderunner.ENTITY.enemy;
 import com.loderunner.ENTITY.character;
@@ -22,7 +23,8 @@ public class game {
     private enemy j2Enemy; // <-- LE PERSO DU JOUEUR 2
     private physics physics;
     private boolean isMulti = false;
-
+    private boolean isCoop = false;
+    private map_generator generator = new map_generator();
     private PathFinder pf = new PathFinder();
     private int tickIa = 0;
 
@@ -47,17 +49,28 @@ public class game {
         this.gamePlayer = m.getPlayer();
     }
 
+    public void setCoop(boolean m) { this.isCoop = m; }
+
     public void loadlevel(int levelNumber) throws IOException {
-        String p = "levels/level" + levelNumber + ".txt";
-        gameMap = map_loader.LoadFromFile(p);
+        this.gameMap = generator.generate(levelNumber);
+
+        this.level = levelNumber;
         gamePlayer = gameMap.getPlayer();
         if (gamePlayer == null) throw new IOException("pas de joueur dans le niveau");
 
-        // assignation j2
-        if (isMulti && !gameMap.getEnemy().isEmpty()) {
-            j2Enemy = gameMap.getEnemy().get(0); // Il prend le controle du 1er ennemi
-        } else {
-            j2Enemy = null;
+        // zssigner j2 (coop/multi)
+        if (isMulti) {
+            if (isCoop) {
+                // coop : j2 a cote de j1
+                j2Enemy = new enemy(gamePlayer.getX()+1, gamePlayer.getY());
+                j2Enemy.setMate(true);
+                gameMap.addenemies(j2Enemy);
+            } else if (!gameMap.getEnemy().isEmpty()) {
+                // 1v1 : prend place enemy
+                j2Enemy = gameMap.getEnemy().get(0);
+            } else {
+                j2Enemy = null;
+            }
         }
 
         physics = new physics(gameMap);
@@ -72,21 +85,35 @@ public class game {
         processInput();   // Touches J1
         processJ2Input(); // Touches J2
 
-        // Gravite
         physics.applyGravity(gamePlayer);
-        for (enemy e : gameMap.getEnemy()) {
-            physics.applyGravity(e);
-        }
+        for (enemy e : gameMap.getEnemy()) physics.applyGravity(e);
 
-        // Collisions
         if (physics.playerCollectsGold(gamePlayer)) score += 100;
 
-        if (physics.playerColidEnemy(gamePlayer)) {
+        // J2 ramasse aussi l'or en Coop !
+        if (isMulti && isCoop && j2Enemy != null) {
+            com.loderunner.ENTITY.gold g = gameMap.getGoldAt(j2Enemy.getX(), j2Enemy.getY());
+            if (g != null) {
+                gameMap.removeGold(g);
+                score += 100;
+            }
+        }
+
+        // Collisions (Modifie pour le mode Coop)
+        boolean dead = false;
+        for (enemy e : gameMap.getEnemy()) {
+            if (isCoop && e == j2Enemy) continue; // EN COOP : J1 et J2 se traversent sans mourir !
+
+            if (gamePlayer.getX() == e.getX() && gamePlayer.getY() == e.getY()) {
+                dead = true;
+                break;
+            }
+        }
+
+        if (dead) {
             gamePlayer.LoseLife();
             if (!gamePlayer.isAlive()) {
-                gameOver = true;
-                running = false;
-                return;
+                gameOver = true; running = false; return;
             }
             respawnPlayer();
         }
@@ -97,8 +124,7 @@ public class game {
         tickIa++;
         if (tickIa >= 4) {
             for (enemy e : gameMap.getEnemy()) {
-                if (e == j2Enemy) continue;
-
+                if (e == j2Enemy) continue; // Le J2 n'a pas d'IA
                 if (!e.getIsUnderGround()) {
                     character.Direction next = pf.getNextStep(e, gamePlayer, gameMap);
                     if (next != null) {
@@ -119,8 +145,22 @@ public class game {
 
         if (gameMap.isLevelCompleted()) {
             level++;
-            try { loadlevel(level); }
-            catch (IOException e) { victory = true; running = false; }
+            try { loadlevel(level); } catch (IOException e) { victory = true; running = false; }
+        }
+    }
+
+    private void processJ2Input() {
+        String touche = j2InputQueue.poll();
+        if (touche == null || j2Enemy == null) return;
+
+        switch (touche) {
+            case "Z": physics.moveUP(j2Enemy); break;
+            case "S": physics.moveDown(j2Enemy); break;
+            case "Q": physics.moveLeft(j2Enemy); break;
+            case "D": physics.moveRight(j2Enemy); break;
+            // En Coop, le J2 a le droit de creuser !
+            case "A": if(isCoop) physics.digLeft(j2Enemy); break;
+            case "E": if(isCoop) physics.digRight(j2Enemy); break;
         }
     }
 
@@ -154,19 +194,6 @@ public class game {
     // Ibputs j2
     public void actionJ2(String touche) {
         if (running) j2InputQueue.offer(touche);
-    }
-
-    private void processJ2Input() {
-        String touche = j2InputQueue.poll();
-        if (touche == null || j2Enemy == null) return;
-
-        // j2 en zqsd
-        switch (touche) {
-            case "Z": physics.moveUP(j2Enemy); break;
-            case "S": physics.moveDown(j2Enemy); break;
-            case "Q": physics.moveLeft(j2Enemy); break;
-            case "D": physics.moveRight(j2Enemy); break;
-        }
     }
 
     private void respawnPlayer() {

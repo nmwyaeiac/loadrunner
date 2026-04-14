@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class SpriteLoader {
   private final Map<String, Image> sprites = new HashMap<>();
-  private static final String[] SPRITE_NAMES = { "player", "enemy", "gold", "brick", "bedrock", "ladder",
+  private static final String[] SPRITE_NAMES = { "player", "player2", "enemy", "gold", "brick", "bedrock", "ladder",
       "monkey_bar" };
 
   public SpriteLoader() {
