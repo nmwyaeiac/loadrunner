@@ -1,165 +1,150 @@
 package com.loderunner.MAP;
 
-import com.loderunner.RESSOURCES.CONFIG.*;
-import com.loderunner.ENTITY.*;
-import com.loderunner.ENTITY.WALL.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.loderunner.ENTITY.WALL.bedrock;
+import com.loderunner.ENTITY.WALL.brick;
+import com.loderunner.ENTITY.enemy;
+import com.loderunner.ENTITY.gold;
+import com.loderunner.ENTITY.ladder;
+import com.loderunner.ENTITY.player;
+import com.loderunner.RESSOURCES.CONFIG.GameConfig;
+
 public class map_generator {
-  private final Random rng;
-  private final GameConfig cfg;
+    private final Random rng;
+    private final GameConfig cfg;
 
-  public map_generator() {
-    this.rng = new Random();
-    this.cfg = GameConfig.get();
-  }
-
-  public map_generator(long seed) {
-    this.rng = new Random(seed);
-    this.cfg = GameConfig.get();
-  }
-
-  // a changer surement c qu une idee : map s agrandis par nv et + d enemie et or
-  // pour plus de difficulter
-  public map generate(int level) {
-    int width = randBetween(cfg.GEN_MIN_WIDTH, cfg.GEN_MAX_WIDTH);
-    int height = randBetween(cfg.GEN_MIN_HEIGHT, cfg.GEN_MAX_HEIGHT);
-    map m = new map(width, height);
-    placeBorder(m, width, height);
-    List<int[]> platforms = generatePlateforms(m, width, height, level);
-    placeGold(m, platforms, level);
-    List<int[]> enemySpots = placeEnemies(m, platforms, level);
-    placePlayer(m, platforms);
-    return m;
-  }
-
-  private void placeBorder(map m, int width, int height) {
-    for (int x = 0; x < width; x++) {
-      m.addBedrock(new bedrock(x, height - 1));
+    public map_generator() {
+        this.rng = new Random();
+        this.cfg = GameConfig.get();
     }
-    for (int y = 0; y < height; y++) {
-      m.addBedrock(new bedrock(0, y));
-      m.addBedrock(new bedrock(width - 1, y));
+
+    public map_generator(long seed) {
+        this.rng = new Random(seed);
+        this.cfg = GameConfig.get();
     }
-  }
 
-  private List<int[]> generatePlateforms(map m, int width, int height, int level) {
-    List<int[]> plateform = new ArrayList<>();
-
-    int[] solPlatform = { 1, width - 2, height - 1 };
-    plateform.add(solPlatform);
-    int y = height - 1;
-    int[] prevPlatform = solPlatform;
-    while (y > 2) {
-      int gap = randBetween(cfg.GEN_FLOOR_GAP_MIN, cfg.GEN_FLOOR_GAP_MAX);
-      y -= gap;
-      if (y <= 1)
-        break;// jsp comment faire sans pour l instant a adapter plus tard
-      int maxLen = Math.max(cfg.GEN_FLOOR_GAP_MIN, cfg.GEN_FLOOR_GAP_MAX);
-      int len = randBetween(cfg.GEN_PLATEFORM_MIN_LEN, maxLen);
-      int cx = randBetween(1 + len / 2, width - 2 - len / 2);
-      int[] bounds = placePlatform(m, cx, y, len);
-      plateform.add(new int[] { bounds[0], bounds[1], y });
-      int ladderX = randBetween(bounds[0], bounds[1]);
-      placeLadder(m, ladderX, y, prevPlatform[2]);
-      prevPlatform = new int[] { bounds[0], bounds[1], y };
-    }
-    int exitX = randBetween(1, width - 2);
-    placeLadder(m, exitX, 0, prevPlatform[2]);
-    return plateform;
-  }
-
-  private int[] placePlatform(map m, int cx, int y, int len) {
-    int left = cx;
-    int right = cx;
-    m.addBrick(new brick(cx, y));
-    for (int i = 1; i <= len; i++) {
-      if ((i % 2) == 0) {
-        if (left - 1 > 0) {
-          left--;
-          m.addBrick(new brick(left, y));
-        } else {
-          if (right + 1 < m.getWidth() - 1) {
-            right++;
-            m.addBrick(new brick(right, y));
-          }
+    public map generate(int level) {
+        int width = 30; 
+        int height = 20; 
+        map m = new map(width, height);
+        placeBorder(m, width, height);
+        List<int[]> platforms = generateStructure(m, width, height);
+        for (int i = platforms.size() - 1; i > 0; i--) {
+            int[] current = platforms.get(i);
+            int[] below = platforms.get(i - 1);
+            int ladderX = randBetween(current[0], current[1]);
+            drawLadderBetween(m, ladderX, current[2], below[2]);
         }
-      }
+
+        placeGold(m, platforms, level);
+        placeEnemies(m, platforms, level);
+        placePlayer(m, platforms);
+
+        return m;
     }
-    return new int[] { left, right };
-  }
 
-  private void placeLadder(map m, int x, int y, int yBottom) {
-    for (int ly = y; ly < yBottom; ly++) {
-      if (!m.isSolid(x, ly)) {
-        m.addLadders(new ladder(x, ly));
-      }
+    private void placeBorder(map m, int width, int height) {
+        for (int x = 0; x < width; x++) {
+            m.addBedrock(new bedrock(x, 0));
+            m.addBedrock(new bedrock(x, height - 1));
+        }
+        for (int y = 1; y < height - 1; y++) {
+            m.addBedrock(new bedrock(0, y));
+            m.addBedrock(new bedrock(width - 1, y));
+        }
     }
-  }
 
-  private void placeGold(map m, List<int[]> platforms, int level) {
-    int count = cfg.goldCountForLevel(level);
-    List<int[]> candidates = getFreeSpots(m, platforms);
-    List<int[]> placed = new ArrayList<>();
-    for (int i = 0; i < count && !candidates.isEmpty(); i++) {
-      int idx = rng.nextInt(candidates.size());
-      int[] spot = candidates.remove(idx);
-      m.addGold(new gold(spot[0], spot[1], 1));
+    private List<int[]> generateStructure(map m, int width, int height) {
+    List<int[]> platforms = new ArrayList<>();
+    platforms.add(new int[]{1, width - 2, height - 1});
+    int y = height - 2;
+    while (y > 4) {
+        y -= 3;
+        int len = randBetween(6, 12);
+        int cx = randBetween(2 + len / 2, width - 3 - len / 2);
+        int[] bounds = placePlatform(m, cx, y, len);
+        platforms.add(new int[]{bounds[0], bounds[1], y});
     }
-  }
-
-  private List<int[]> placeEnemies(map m, List<int[]> platforms, int level) {
-    int count = cfg.enemyCountForLevel(level);
-    List<int[]> candidates = getFreeSpots(m, platforms);
-    List<int[]> placed = new ArrayList<>();
-
-    for (int i = 0; i < count && !candidates.isEmpty(); i++) {
-      int idx = rng.nextInt(candidates.size());
-      int[] spot = candidates.remove(idx);
-      m.addenemies(new enemy(spot[0], spot[1]));
-      placed.add(spot);
+    return platforms;
+}
+    private int[] placePlatform(map m, int cx, int y, int len) {
+        int left = cx - (len / 2);
+        int right = cx + (len / 2);
+        for (int x = left; x <= right; x++) {
+            if (x > 0 && x < m.getWidth() - 1) {
+                m.addBrick(new brick(x, y));
+            }
+        }
+        return new int[]{left, right};
     }
-    return placed;
-  }
 
-  private void placePlayer(map m, List<int[]> platforms) {
-    int[] topPlatform = null;
-    int minY = Integer.MAX_VALUE;
-    for (int i = 1; i < platforms.size(); i++) {
-      int[] p = platforms.get(i);
-      if (p[2] < minY) {
-        minY = p[2];
-        topPlatform = p;
-      }
+   private void drawLadderBetween(map m, int x, int yUpper, int yLower) {
+    if (m.getBrickAt(x, yUpper) != null) {
+        m.removeBrick(x, yUpper);
+        m.addLadders(new ladder(x, yUpper));
     }
-    if (topPlatform == null)
-      topPlatform = platforms.get(0);
-    int px = topPlatform[0] + 1;
-    int py = topPlatform[2] - 1;
-    m.setPlayer(new player(px, py));
+    int y = yUpper + 1;
+    while (y < m.getHeight() - 1) {
+        boolean solidBelow = m.isSolid(x, y + 1) || m.getBrickAt(x, y + 1) != null;
+        if (m.getBrickAt(x, y) != null) {
+            m.removeBrick(x, y);
+            m.addLadders(new ladder(x, y));
+            break;
+        }
+        if (m.isSolid(x, y)) {
+            break;
+        }
+        m.addLadders(new ladder(x, y));
+        if (solidBelow) {
+            break;
+        }
+        y++;
+    }
+}
 
-  }
+    private void placeGold(map m, List<int[]> platforms, int level) {
+        int count = cfg.goldCountForLevel(level);
+        List<int[]> spots = getFreeSpots(m, platforms);
+        for (int i = 0; i < count && !spots.isEmpty(); i++) {
+            int[] spot = spots.remove(rng.nextInt(spots.size()));
+            m.addGold(new gold(spot[0], spot[1], 1));
+        }
+    }
 
-  private List<int[]> getFreeSpots(map m, List<int[]> platforms) {
+    private void placeEnemies(map m, List<int[]> platforms, int level) {
+        int count = cfg.enemyCountForLevel(level);
+        List<int[]> spots = getFreeSpots(m, platforms);
+        for (int i = 0; i < count && !spots.isEmpty(); i++) {
+            int[] spot = spots.remove(rng.nextInt(spots.size()));
+            m.addenemies(new enemy(spot[0], spot[1]));
+        }
+    }
+
+    private void placePlayer(map m, List<int[]> platforms) {
+        int[] top = platforms.get(platforms.size() - 1);
+        m.setPlayer(new player(top[0], top[2] - 1));
+    }
+
+    private List<int[]> getFreeSpots(map m, List<int[]> platforms) {
     List<int[]> spots = new ArrayList<>();
     for (int[] p : platforms) {
-      int xL = p[0], xR = p[1], y = p[2];
-      for (int x = xL; x <= xR; x++) {
-        int above = y - 1;
-        if (above >= 0 && !m.isSolid(x, above) && !m.isLadder(x, above)) {
-          spots.add(new int[] { x, above });
+        for (int x = p[0]; x <= p[1]; x++) {
+            int above = p[2] - 1;
+            if (above > 0 
+                && !m.isSolid(x, above) 
+                && !m.isLadder(x, above)
+                && m.isSolid(x, p[2])) {  // vérif qu'il y a bien un sol dessous
+                spots.add(new int[]{x, above});
+            }
         }
-      }
     }
     return spots;
-  }
-
-  private int randBetween(int min, int max) {
-    if (min >= max)
-      return min;
-    return min + rng.nextInt(max - min + 1);
-  }
+}
+    private int randBetween(int min, int max) {
+        if (min >= max) return min;
+        return min + rng.nextInt(max - min + 1);
+    }
 }
