@@ -21,26 +21,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class game {
     private map gameMap;
     private player gamePlayer;
-    private enemy j2Enemy; // <-- LE PERSO DU JOUEUR 2
+    private enemy j2Enemy; 
     private physics physics;
     private boolean isMulti = false;
     private boolean isCoop = false;
-    private boolean useGeneration = true; // Choix de la map
-
+    private boolean useGeneration = true;
     private map_generator generator = new map_generator();
     private PathFinder pf = new PathFinder();
     private int tickIa = 0;
-
     private int score = 0;
     private int level = 1;
     private boolean running = false;
     private boolean gameOver = false;
     private boolean victory = false;
-
-    // 2 files d'attente pour eviter concurrence clavier
     private final LinkedBlockingQueue<Action> inputQueue = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<String> j2InputQueue = new LinkedBlockingQueue<>();
-
     public game() {}
 
     public void setMulti(boolean m) { this.isMulti = m; }
@@ -63,16 +58,12 @@ public class game {
         this.level = levelNumber;
         gamePlayer = gameMap.getPlayer();
         if (gamePlayer == null) throw new IOException("pas de joueur dans le niveau");
-
-        // zssigner j2 (coop/multi)
         if (isMulti) {
             if (isCoop) {
-                // coop : j2 a cote de j1
                 j2Enemy = new enemy(gamePlayer.getX()+1, gamePlayer.getY());
-                j2Enemy.setMate(true); // Utilise ton setter de Partenaire !
+                j2Enemy.setMate(true);
                 gameMap.addenemies(j2Enemy);
             } else if (!gameMap.getEnemy().isEmpty()) {
-                // 1v1 : prend place enemy
                 j2Enemy = gameMap.getEnemy().get(0);
             } else {
                 j2Enemy = null;
@@ -87,16 +78,11 @@ public class game {
 
     public void update() {
         if (!running || gameOver || victory) return;
-
-        processInput();   // Touches J1
-        processJ2Input(); // Touches J2
-
-        // --- FIX : GRAVITE ET PIEGES (TRAP) ---
+        processInput(); 
+        processJ2Input();
         physics.applyGravity(gamePlayer);
-
         for (enemy e : gameMap.getEnemy()) {
             brick b = gameMap.getBrickAt(e.getX(), e.getY());
-
             if (b != null && b.getIsBroken()) {
                 // Si l'ennemi est sur un bloc detruit, il tombe et reste bloque
                 e.setIsUnderGround(true);
@@ -112,8 +98,6 @@ public class game {
         }
 
         if (physics.playerCollectsGold(gamePlayer)) score += 100;
-
-        // J2 ramasse aussi l'or en Coop !
         if (isMulti && isCoop && j2Enemy != null) {
             com.loderunner.ENTITY.gold g = gameMap.getGoldAt(j2Enemy.getX(), j2Enemy.getY());
             if (g != null) {
@@ -121,36 +105,28 @@ public class game {
                 score += 100;
             }
         }
-
-        // Collisions (Modifie pour le mode Coop)
         boolean dead = false;
         for (enemy e : gameMap.getEnemy()) {
-            if (isCoop && e == j2Enemy) continue; // EN COOP : J1 et J2 se traversent sans mourir !
-
+            if (isCoop && e == j2Enemy) continue; //coop 
+            if (e.getIsUnderGround()) continue;
             if (gamePlayer.getX() == e.getX() && gamePlayer.getY() == e.getY()) {
                 dead = true;
                 break;
             }
         }
 
-        if (dead) {
-            gamePlayer.LoseLife();
+        if (dead) { gamePlayer.LoseLife();
             if (!gamePlayer.isAlive()) {
                 gameOver = true; running = false; return;
             }
             respawnPlayer();
         }
-
-        gameMap.update(); // Regenere les blocs casses
-
-        // ia : ciblage
+        gameMap.update();
         tickIa++;
         if (tickIa >= 4) {
             for (enemy e : gameMap.getEnemy()) {
-                if (e == j2Enemy) continue; // Le J2 n'a pas d'IA
-
+                if (e == j2Enemy) continue;
                 if (!e.getIsUnderGround()) {
-                    // On choisit cible plus proche en Coop
                     player target = gamePlayer;
                     if (isMulti && isCoop && j2Enemy != null) {
                         int distJ1 = Math.abs(e.getX() - gamePlayer.getX()) + Math.abs(e.getY() - gamePlayer.getY());
@@ -203,7 +179,7 @@ public class game {
         running = true;
     }
 
-    // fix : delai de touches
+    // pour delais des touches
     public void actionMoveUp() { if (running) { inputQueue.clear(); inputQueue.offer(Action.MOVE_UP); } }
     public void actionMoveDown() { if (running) { inputQueue.clear(); inputQueue.offer(Action.MOVE_DOWN); } }
     public void actionMoveLeft() { if (running) { inputQueue.clear(); inputQueue.offer(Action.MOVE_LEFT); } }
@@ -225,9 +201,12 @@ public class game {
         }
     }
 
-    // Ibputs j2 (On vide aussi pour le J2)
+    // Ibputs j2 on vide pour le j2 
     public void actionJ2(String touche) {
-        if (running) { j2InputQueue.clear(); j2InputQueue.offer(touche); }
+        if (running) { 
+            j2InputQueue.clear(); 
+            j2InputQueue.offer(touche);
+        }
     }
 
     private void respawnPlayer() {
