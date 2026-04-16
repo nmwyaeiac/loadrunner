@@ -93,7 +93,11 @@ public class map implements Serializable {
     bricks.add(b);
     grid[b.getX()][b.getY()] = tiletype.DESTRUCTIBLE_WALL;
   }
-
+  
+  public void removeBrick(int x, int y) {
+    bricks.removeIf(b -> b.getX() == x && b.getY() == y);
+    grid[x][y] = tiletype.EMPTY;
+  }
   public void addBedrock(bedrock b) {
     bedrocks.add(b);
     grid[b.getX()][b.getY()] = tiletype.INDESTRUCTIBLE_WALL;
