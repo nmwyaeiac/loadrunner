@@ -10,33 +10,34 @@ import java.io.IOException;
 import com.loderunner.UI.NetworkWindow;
 
 public class Main extends Application {
-  @Override
-  public void start(Stage primaryStage) {
-    ScreenMenu menu = new ScreenMenu(primaryStage);
-    menu.show(
-        () -> StartSolo(primaryStage),
-        () -> StartPanelMulti(primaryStage),
-        () -> Platform.exit());
-  }
-
-  private Runnable returnToMenu(Stage stage) {
-      return () -> {
-          try { start(stage); } catch (Exception e) {}
-      };
-  }
-
-  private void StartSolo(Stage stage) {
-    game gameInstance = new game();
-    try {
-      gameInstance.loadlevel(1);
-    } catch (IOException e) {
-      System.err.println("bug de chargement gros :" + e.getMessage());
-      return;
+    @Override
+    public void start(Stage primaryStage) {
+        ScreenMenu menu = new ScreenMenu(primaryStage);
+        menu.show(
+                (useGen) -> StartSolo(primaryStage, useGen),
+                (useGen) -> StartPanelMulti(primaryStage, useGen),
+                () -> Platform.exit());
     }
-    new GameWindow(gameInstance, returnToMenu(stage)).show(stage);
-  }
 
-    private void StartPanelMulti(Stage stage) {
+    private Runnable returnToMenu(Stage stage) {
+        return () -> {
+            try { start(stage); } catch (Exception e) {}
+        };
+    }
+
+    private void StartSolo(Stage stage, boolean useGen) {
+        game gameInstance = new game();
+        gameInstance.setUseGeneration(useGen); // envoi de l'option map
+        try {
+            gameInstance.loadlevel(1);
+        } catch (IOException e) {
+            System.err.println("bug de chargement gros :" + e.getMessage());
+            return;
+        }
+        new GameWindow(gameInstance, returnToMenu(stage)).show(stage);
+    }
+
+    private void StartPanelMulti(Stage stage, boolean useGen) {
         javafx.scene.layout.VBox menu = new javafx.scene.layout.VBox(20);
         menu.setAlignment(javafx.geometry.Pos.CENTER);
         menu.setStyle("-fx-background-color: #000000;");
@@ -60,13 +61,15 @@ public class Main extends Application {
         javafx.scene.control.Button btnJoin = new javafx.scene.control.Button("3. Rejoindre la partie");
         btnJoin.setFont(javafx.scene.text.Font.font("Monospace", 20));
 
+        String modeMap = useGen ? "GEN" : "FILE"; // On passe le choix au Serveur
+
         btnHostCoop.setOnAction(e -> {
-            new Thread(() -> com.loderunner.NETWORK.Serveur.main(new String[]{"COOP"})).start();
+            new Thread(() -> com.loderunner.NETWORK.Serveur.main(new String[]{"COOP", modeMap})).start();
             new NetworkWindow("127.0.0.1", returnToMenu(stage)).show(stage);
         });
 
         btnHostCombat.setOnAction(e -> {
-            new Thread(() -> com.loderunner.NETWORK.Serveur.main(new String[]{"COMBAT"})).start();
+            new Thread(() -> com.loderunner.NETWORK.Serveur.main(new String[]{"COMBAT", modeMap})).start();
             new NetworkWindow("127.0.0.1", returnToMenu(stage)).show(stage);
         });
 
@@ -78,7 +81,7 @@ public class Main extends Application {
         stage.setScene(new javafx.scene.Scene(menu, 800, 600));
     }
 
-  public static void main(String[] args) {
-    launch(args);
-  }
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

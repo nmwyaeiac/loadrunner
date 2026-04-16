@@ -12,8 +12,12 @@ public class Serveur {
 
     public static void main(String[] args) {
         serverRunning = true;
-        // lecture du mode de jeu
+        // lecture du mode de jeu et de la map
         boolean modeCoop = args.length > 0 && args[0].equals("COOP");
+        boolean useGen = true;
+        if (args.length > 1) {
+            useGen = args[1].equals("GEN");
+        }
 
         ScoreUDPServer scoreServer = new ScoreUDPServer(udp);
         new Thread(scoreServer, "score").start();
@@ -21,6 +25,7 @@ public class Serveur {
         gameInstance = new game();
         gameInstance.setMulti(true);
         gameInstance.setCoop(modeCoop);
+        gameInstance.setUseGeneration(useGen); // Application de la regle de map
 
         try {
             gameInstance.loadlevel(1);
@@ -84,7 +89,7 @@ public class Serveur {
             String touche;
             while ((touche = in.readLine()) != null) {
                 if (isJ1) {
-                // touches J1
+                    // touches J1
                     switch (touche) {
                         case "Z": gameInstance.actionMoveUp(); break;
                         case "S": gameInstance.actionMoveDown(); break;
@@ -94,7 +99,7 @@ public class Serveur {
                         case "E": gameInstance.actionDigRight(); break;
                     }
                 } else {
-                // touches J1
+                    // touches J1
                     gameInstance.actionJ2(touche);
                 }
             }
