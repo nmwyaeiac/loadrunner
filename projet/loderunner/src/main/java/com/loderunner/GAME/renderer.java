@@ -5,6 +5,7 @@ import com.loderunner.ENTITY.player;
 
 /**
  * renderer
+ * utiliser en phase de test pour afficher en ascii le jeux 
  */
 public class renderer {
   // seq ansi pour posiiton le curseur en (0,0), sans effacer
